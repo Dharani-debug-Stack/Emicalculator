@@ -45,12 +45,13 @@ public class EmiPageTest extends BaseClass {
         //  Step 4: Assert
         Assert.assertEquals(uiEMI, calculatedEMI, " EMI mismatch - Calculation is incorrect");
 
-        System.out.println("✅ EMI is accurate!");
+        System.out.println("EMI is accurate!");
 
     }
         catch (Exception e)
      {
         e.printStackTrace();
+         System.out.println("Error occured: "+e.getMessage());
         Assert.fail("Test failed due to exception");
      }
    }
