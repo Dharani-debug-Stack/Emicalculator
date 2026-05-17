@@ -50,8 +50,8 @@ public class EmiPageTest extends BaseClass {
     }
         catch (Exception e)
      {
-        e.printStackTrace();
-         System.out.println("Error occured: "+e.getMessage());
+       // e.printStackTrace();
+       //  System.out.println("Error occured: "+e.getMessage());
         Assert.fail("Test failed due to exception");
      }
    }
