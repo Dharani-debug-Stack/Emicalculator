@@ -2,8 +2,10 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite">
     <test thread-count="2" name="Test">
-        <classes>
-        </classes>
+      <classes>
+          <class name="testCases.CarLoanTest"/>
+
+      </classes>
 
     </test>
 </suite>
