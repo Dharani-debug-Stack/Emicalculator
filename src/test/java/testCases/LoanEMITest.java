@@ -1,27 +1,42 @@
 package testCases;
 
-import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import pageObject.LoanEMIPage;
 import testBase.BaseClass;
 
 public class LoanEMITest extends BaseClass {
 
-    @Test
-    public void validateLoanEMICalculatorUI() {
+    @Test(priority = 1)
+    public void validateNavigationAndUIFields() {
 
-        // Navigate to EMI Calculator under Loan Calculator
-        driver.findElement(By.linkText("Loan Calculator")).click();
-        driver.findElement(By.linkText("EMI Calculator")).click();
+        LoanEMIPage page = new LoanEMIPage(driver);
 
-        LoanEMIPage loanEMIPage = new LoanEMIPage(driver);
+        // Navigate
+        page.navigateToEMICalculator();
 
-        // Validate input fields
-        Assert.assertTrue(
-                loanEMIPage.areInputFieldsEnabled(),
-                "Loan EMI input fields are not enabled"
-        );
+        // Validate UI Fields
+        Assert.assertTrue(page.areInputFieldsDisplayed(), "Input fields NOT visible");
+        Assert.assertTrue(page.areInputFieldsEnabled(), "Input fields NOT enabled");
+    }
+
+    @Test(priority = 2)
+    public void validateSliderSyncFunctionality() {
+
+        LoanEMIPage page = new LoanEMIPage(driver);
+
+        page.navigateToEMICalculator();
+
+        // Loan Amount Sync
+        Assert.assertTrue(page.validateLoanAmountSync(),
+                "Loan Amount slider sync FAILED");
+
+        // Interest Sync
+        Assert.assertTrue(page.validateInterestSync(),
+                "Interest slider sync FAILED");
+
+        // Tenure Sync
+        Assert.assertTrue(page.validateTenureSync(),
+                "Tenure slider sync FAILED");
     }
 }
