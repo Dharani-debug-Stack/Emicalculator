@@ -2,58 +2,47 @@ package testCases;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import pageObject.EmiPage;
+import pageObject.HomePage;
 import testBase.BaseClass;
 
-public class EmiPageTest extends BaseClass {
+public class EmiPageTest extends BaseClass
+{
     @Test
-    public void validateEMIAccuracy()
+    public void veriftEmi()
     {
-
         try
-    {
-       // Step 1: Open website
-        driver.get("https://emicalculator.net/");
+        {
+            HomePage hp= new HomePage(driver);
+            hp.clickcalculator();
 
-        EmiPage page = new EmiPage(driver);
+            EmiPage emi= new EmiPage(driver);
+            emi.setLoanAmount();
+            emi.setLoanInterest();
+            emi.setloanterm();
+            emi.setloantermmonth();
+            emi.setfee();
 
-        // Input values
-        double principal = 1500000;   // 15 Lakhs
-        double annualRate = 9.5;
-        int tenureYears = 1;
+            //loan amount
 
-        page.enterLoanDetails("1500000", "9.5", "1");
+            emi.clickLoanamount();
+            emi.setLoanAmount1();
+            emi.setLoanInterest1();
+            emi.setloanterm1();
+            emi.setloantermmonth1();
+            emi.setfee1();
 
-        // Step 2: Get EMI from UI
-        double uiEMI = page.getEMIFromUI();
-
-        //  Step 3: Calculate EMI using formula
-        double monthlyRate = (annualRate / 12) / 100;
-        int months = tenureYears * 12;
-
-        double calculatedEMI =
-                (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-                        (Math.pow(1 + monthlyRate, months) - 1);
-
-        // Round value for comparison
-        calculatedEMI = Math.round(calculatedEMI);
-
-        //  Print values
-        System.out.println("UI EMI        : " + uiEMI);
-        System.out.println("Calculated EMI: " + calculatedEMI);
-
-        //  Step 4: Assert
-        Assert.assertEquals(uiEMI, calculatedEMI, " EMI mismatch - Calculation is incorrect");
-
-        System.out.println("EMI is accurate!");
-
+            //loan tanure
+            emi.clickLoanamount1();
+            emi.setLoanAmount2();
+            emi.setLoanInterest2();
+            emi.setloanterm2();
+            emi.setfee2();
+        }catch(Exception e)
+        {
+            Assert.fail();
+        }
     }
-        catch (Exception e)
-     {
-       // e.printStackTrace();
-       //  System.out.println("Error occured: "+e.getMessage());
-        Assert.fail("Test failed due to exception");
-     }
-   }
-}
 
+}

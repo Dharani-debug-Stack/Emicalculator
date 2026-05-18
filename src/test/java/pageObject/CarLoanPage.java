@@ -1,18 +1,14 @@
 package pageObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class HomeLoanPage extends BasePage
+public class CarLoanPage extends BasePage
 {
-    public HomeLoanPage(WebDriver driver)
+    public CarLoanPage(WebDriver driver)
     {
         super(driver);
     }
@@ -26,16 +22,18 @@ public class HomeLoanPage extends BasePage
     @FindBy(xpath="//input[@id='loanterm']")
     WebElement txtloanterm;
 
-    @FindBy(xpath="//table//tr[contains(@class,'yearlypaymentdetails')]")
-    List<WebElement> allRows;
+    @FindBy(xpath="//*[@id=\"emitotalinterest\"]/p/span")
+    WebElement Interest;
 
+    @FindBy(xpath="//*[@id=\"emitotalamount\"]/p")
+    WebElement Total;
 
     public void setLoanAmount()
     {
         txtloanamount.click();
         txtloanamount.sendKeys(Keys.CONTROL+"a");
         txtloanamount.sendKeys(Keys.DELETE);
-        wait.until(ExpectedConditions.visibilityOf(txtloanamount)).sendKeys("1500000");
+        wait.until(ExpectedConditions.visibilityOf( txtloanamount)).sendKeys("1500000");
         txtloanamount.click();
     }
 
@@ -53,23 +51,34 @@ public class HomeLoanPage extends BasePage
         txtloanterm.click();
         txtloanterm.sendKeys(Keys.CONTROL+"a");
         txtloanterm.sendKeys(Keys.DELETE);
-        wait.until(ExpectedConditions.visibilityOf(txtloanterm)).sendKeys("1");
+        wait.until(ExpectedConditions.visibilityOf( txtloanterm)).sendKeys("1");
         txtloanterm.click();
         txtloanterm.sendKeys(Keys.ENTER);
     }
 
-    public List<WebElement>getAllRows() {
-        wait.until(ExpectedConditions.visibilityOfAllElements(allRows));
-        return allRows;
+    public void getInterest()
+    {
+        String inter=Interest.getText();
+        System.out.println(inter);
+        inter=inter.replaceAll("[^0-9.]","");
+        double inter1=Double.parseDouble(inter);
+        double inter2=inter1/12;
+        System.out.println("Interest amount for one month = "+inter2);
     }
 
-    public List<WebElement> getColumns(WebElement row) {
-        List<WebElement> cols = row.findElements(By.tagName("td"));
+    public void getTotal()
+    {
 
-        if (cols.size() == 0) {
-            cols = row.findElements(By.tagName("th")); // header
-        }
-        return cols;
+        String total=Total.getText();
+        total=total.replaceAll("[^0-9.]","");
+        double total1=Double.parseDouble(total);
+        String inter=Interest.getText();
+        inter=inter.replaceAll("[^0-9.]","");
+        double inter1=Double.parseDouble(inter);
+        double total2=total1-inter1;
+        System.out.println(total2);
+        double total3=total2/12;
+        System.out.println("principal amount for one month = "+total3);
     }
-
 }
+
