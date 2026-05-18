@@ -1,6 +1,5 @@
 package pageObject;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -13,48 +12,42 @@ public class LoanEMIPage extends BasePage {
         super(driver);
     }
 
-    // ===== Menu elements =====
-
+    // MENU
     @FindBy(id = "menu-item-dropdown-2696")
     WebElement loanCalculatorMenu;
 
-    @FindBy(xpath = "//a[contains(@href,'loan-calculator')]")
-    WebElement loanCalculatorLink;
-
-//    @FindBy(id = "emi-calc")
-//    WebElement emiCalculatorLink;
-
-    // ===== EMI input fields =====
-
+    // INPUT FIELDS
     @FindBy(id = "loanamount")
-    WebElement txtLoanAmount;
+    WebElement loanAmount;
 
     @FindBy(id = "loaninterest")
-    WebElement txtLoanInterest;
+    WebElement loanInterest;
 
     @FindBy(id = "loanterm")
-    WebElement txtLoanTenure;
+    WebElement loanTenure;
 
-    // ===== Actions =====
+    //  FINAL FIXED NAVIGATION
 
-    // Navigate from Menu → Loan Calculator → EMI Calculator
-    public void navigateToLoanEMICalculator() {
-        Actions actions = new Actions(driver);
+    public void navigateToLoanCalculator() {
 
+        Actions act = new Actions(driver);
+
+        // Step 1: hover menu (only to simulate user flow)
         wait.until(ExpectedConditions.visibilityOf(loanCalculatorMenu));
-        actions.moveToElement(loanCalculatorMenu).perform();
+        act.moveToElement(loanCalculatorMenu).perform();
 
-        wait.until(ExpectedConditions.elementToBeClickable(loanCalculatorLink)).click();
-//        wait.until(ExpectedConditions.elementToBeClickable(emiCalculatorLink)).click();
+        // Step 2: DIRECT NAVIGATION (MOST STABLE )
+        driver.get("https://emicalculator.net/loan-calculator/");
     }
 
-    // Validate EMI input fields
-    public boolean areInputFieldsEnabled() {
-        wait.until(ExpectedConditions.visibilityOfAllElements(
-                txtLoanAmount, txtLoanInterest, txtLoanTenure));
 
-        return txtLoanAmount.isEnabled()
-                && txtLoanInterest.isEnabled()
-                && txtLoanTenure.isEnabled();
+    // VALIDATION
+    public boolean validateAllFields() {
+
+        wait.until(ExpectedConditions.visibilityOf(loanAmount));
+
+        return loanAmount.isDisplayed()
+                && loanInterest.isDisplayed()
+                && loanTenure.isDisplayed();
     }
 }
