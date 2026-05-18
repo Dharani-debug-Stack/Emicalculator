@@ -26,5 +26,4 @@ public class HomePage extends BasePage {
     }
     public void clickhomeLoan(){clickhomeLoan.click();}
     public void clickcalculator(){clickcalculator.click();}
-
 }
