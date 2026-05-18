@@ -58,4 +58,8 @@ public class HomeLoanPage extends BasePage {
         return yearlyRows;
     }
 
+    public List<WebElement> getColumns(WebElement row) {
+
+            return row.findElements(By.tagName("td"));
+    }
 }
