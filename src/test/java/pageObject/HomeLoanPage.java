@@ -29,7 +29,6 @@ public class HomeLoanPage extends BasePage
     @FindBy(xpath="//table//tr[contains(@class,'yearlypaymentdetails')]")
     List<WebElement> allRows;
 
-
     public void setLoanAmount()
     {
         txtloanamount.click();
@@ -58,7 +57,7 @@ public class HomeLoanPage extends BasePage
         txtloanterm.sendKeys(Keys.ENTER);
     }
 
-    public List<WebElement>getAllRows() {
+    public List<WebElement> getAllRows() {
         wait.until(ExpectedConditions.visibilityOfAllElements(allRows));
         return allRows;
     }
