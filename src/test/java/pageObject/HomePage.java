@@ -14,8 +14,17 @@ public class HomePage extends BasePage {
     @FindBy(xpath="//a[normalize-space()='Car Loan']")
     WebElement clickcartLoan;
 
+    @FindBy(xpath="//a[normalize-space()='Home Loan']")
+    WebElement clickhomeLoan;
+
+    @FindBy(xpath="//li[@id='menu-item-3009']//a[contains(text(),'Loan Calculator — Calculate EMI, Affordability, Te')]")
+    WebElement clickcalculator;
+
     public void clickcarLoan()
     {
         clickcartLoan.click();
     }
+    public void clickhomeLoan(){clickhomeLoan.click();}
+    public void clickcalculator(){clickcalculator.click();}
+
 }
