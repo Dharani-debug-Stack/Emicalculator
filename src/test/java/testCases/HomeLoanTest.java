@@ -19,10 +19,10 @@ public class HomeLoanTest extends BaseClass {
 
             HomeLoanPage home = new HomeLoanPage(driver);
 
-            // Step 1: Navigate
+            // ✅ Step 1: Navigate
             home.navigateToHomeLoanCalculator();
 
-            //  Step 2: Enter Loan Details
+            // ✅ Step 2: Enter Details
             home.setHomeValue();
             home.setDownPayment();
             home.setInsurance();
@@ -30,94 +30,85 @@ public class HomeLoanTest extends BaseClass {
             home.setTenure();
             home.setFees();
 
-            //  Step 3: Validate Table Generated
+            // ✅ Step 3: Validate Table Generated
             boolean result = home.isTableGenerated();
+            Assert.assertTrue(result, "❌ EMI table not generated");
 
-            Assert.assertTrue(result, " EMI table not generated");
+            System.out.println("✅ Home Loan EMI table generated successfully");
 
-            System.out.println(" Home Loan EMI table generated successfully");
-
-
-            // Step 2: Extract yearly table
+            // ✅ Step 4: Extract Table Data
             List<String[]> yearlyData = home.extractYearlyTable();
 
-            // Step 3: Parse and validate
             double totalPrincipal = 0.0;
-            for(String[] row : yearlyData) {
-                String year = row[0];
-                String principal = row[1];
-                String interest = row[2];
-                String totalPayment = row[3];
-                String balance = row[4];
-                String loanPaid = row[5];
 
-                System.out.println(year + " | " + principal + " | " + interest + " | "
-                        + totalPayment + " | " + balance + " | " + loanPaid);
+            for (String[] row : yearlyData) {
 
-                totalPrincipal += Double.parseDouble(principal.replace("₹","").replace(",","").trim());
+                System.out.println(String.join(" | ", row));
+
+                totalPrincipal += Double.parseDouble(
+                        row[1].replace("₹", "").replace(",", "").trim()
+                );
             }
 
+            // ✅ Step 5: Calculation
             double homeValue = Double.parseDouble(
-                    home.getHomeValue().replace("₹","").replace(",","").trim()
+                    home.getHomeValue().replace("₹", "").replace(",", "").trim()
             );
 
-            double downPaymentPercent = Double.parseDouble(
-                    home.getDownPayment().trim()
-            );
-
+            double downPaymentPercent = Double.parseDouble(home.getDownPayment());
             double insurance = Double.parseDouble(
-                    home.getInsurance().replace("₹","").replace(",","").trim()
+                    home.getInsurance().replace("₹", "").replace(",", "").trim()
             );
 
-// Calculate down payment in rupees
             double downPayment = homeValue * (downPaymentPercent / 100.0);
-
-// Expected loan amount
             double expectedLoanAmount = homeValue + insurance - downPayment;
 
-// Validate
-            Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0, "Principal mismatch!");
+            // ✅ Step 6: Validation
+            Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0,
+                    "❌ Principal mismatch");
 
+            System.out.println("✅ EMI validation successful!");
 
-            System.out.println("✅ EMI table validation completed successfully. Principal matches expected loan amount!");
+            // ✅ ✅ Step 7: Excel Write (FIXED)
+            ExcelUtils excel = new ExcelUtils("EMI Table");
 
+            List<WebElement> rows = home.getAllRows();
+            int rowNum = 0;
 
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            Assert.fail("Test failed");
-//        }
+            for (WebElement row : rows) {
 
-        //ReadTable
-        ExcelUtils excel= new ExcelUtils("EMI Table");
-        List<WebElement> rows = home.getAllRows();
-        int rowNum = 0;  //Excel row index
+                List<WebElement> cols = home.getColumns(row);
+                int colNum = 0;
 
-        for (WebElement row : rows) {
+                for (WebElement col : cols) {
+                    excel.write(rowNum, colNum++, col.getText().trim());
+                }
 
-            List<WebElement> cols = home.getColumns(row);
-
-            int colNum = 0;  //excel column index
-
-            for (WebElement col : cols) {
-                String data = col.getText().trim();
-                excel.write(rowNum, colNum++, data);
+                rowNum++;
             }
-            rowNum++;
+
+            // ✅ FIX: Unique filename (avoids lock issue)
+            String filePath = System.getProperty("user.dir")
+                    + "/src/test/resources/caldata_"
+                    + System.currentTimeMillis() + ".xlsx";
+
+            excel.save(filePath);
+
+            System.out.println("✅ Excel saved at: " + filePath);
+
+            // ✅ OPTIONAL: Open file safely
+            try {
+                if (java.awt.Desktop.isDesktopSupported()) {
+                    java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
+                }
+            } catch (Exception e) {
+                System.out.println("⚠ Unable to open Excel file automatically");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            Assert.fail("❌ Test failed due to exception: " + e.getMessage());
         }
-        // Step 3:  Save Excel
-        excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
-
-        Runtime.getRuntime().exec(
-                "cmd /c start excel \"" +
-                        System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
-        );
-        System.out.println("Table captured successfully!");
     }
-        catch(Exception e)
-    {
-        e.printStackTrace();
-        Assert.fail();
-    }
-    }
-
 }

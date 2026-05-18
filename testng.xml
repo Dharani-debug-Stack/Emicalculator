@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Suite">
-    <test thread-count="2" name="Test">
-      <classes>
-          <class name="testCases.CarLoanTest"/>
-          <class name="testCases.EmiPageTest"/>
-          <class name="testCases.HomeLoanTest"/>
-          <class name="testCases.LoanEMITest"/>
-          <class name="testCases.TC_EMIPriceTest"/>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-      </classes>
+<suite name="Suite" verbose="2">
+
+    <!-- ✅ Enable TestNG HTML + Extent -->
+    <listeners>
+        <!-- Generates index.html -->
+        <listener class-name="org.testng.reporters.EmailableReporter2"/>
+
+        <!-- Extent Reports -->
+        <listener class-name="utilities.ExtentListener"/>
+    </listeners>
+
+    <test name="EMI Test Suite">
+
+        <classes>
+            <class name="testCases.CarLoanTest"/>
+            <class name="testCases.EmiPageTest"/>
+            <class name="testCases.HomeLoanTest"/>
+            <class name="testCases.TC_EMIPriceTest"/>
+        </classes>
 
     </test>
+
 </suite>

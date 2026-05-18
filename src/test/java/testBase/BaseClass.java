@@ -1,35 +1,53 @@
 package testBase;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.time.Duration;
 
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.Reporter;
+import org.testng.annotations.*;
 
+public class BaseClass {
 
-    public class BaseClass
-    {
+    public WebDriver driver;
 
-        public WebDriver driver;
+    @BeforeClass
+    public void setup() {
 
-        @BeforeClass
-        public void setup()
-        {
-            //driver=new ChromeDriver();
-            driver = new EdgeDriver();
-            driver.manage().deleteAllCookies();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-            driver.get("https://emicalculator.net/");
-            driver.manage().window().maximize();
-        }
+        // ✅ Force TestNG report generation
+        Reporter.log("Execution started...", true);
 
-
-        @AfterClass
-        public void tearDown()
-        {
-            driver.quit();
-        }
-
+        driver = new ChromeDriver();
+        driver.manage().deleteAllCookies();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+        driver.get("https://emicalculator.net/");
+        driver.manage().window().maximize();
     }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
+    }
+
+    // ✅ Screenshot method (fixed - no overwrite issue)
+    public String captureScreenshot(String testName) {
+
+        String path = System.getProperty("user.dir") + "/reports/"
+                + testName + "_" + System.currentTimeMillis() + ".png";
+
+        try {
+            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            File dest = new File(path);
+
+            Files.createDirectories(dest.getParentFile().toPath());
+            Files.copy(src.toPath(), dest.toPath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return path;
+    }
+}
