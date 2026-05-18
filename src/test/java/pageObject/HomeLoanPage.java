@@ -2,13 +2,12 @@ package pageObject;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import pageObject.BasePage;
 
 public class HomeLoanPage extends BasePage {
 
@@ -16,46 +15,62 @@ public class HomeLoanPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(xpath="//input[@id='loanamount']")
+    // ===== MENU ELEMENTS =====
+
+    @FindBy(id = "menu-item-dropdown-2696")
+    WebElement loanCalculatorMenu;
+
+    @FindBy(xpath = "//a[contains(@href,'home-loan-emi-calculator')]")
+    WebElement homeLoanCalculatorLink;
+
+    // ===== HOME LOAN INPUT FIELDS =====
+
+    @FindBy(id = "loanamount")
     WebElement txtLoanAmount;
 
-    @FindBy(xpath="//input[@id='loaninterest']")
+    @FindBy(id = "loaninterest")
     WebElement txtLoanInterest;
 
-    @FindBy(xpath="//input[@id='loanterm']")
+    @FindBy(id = "loanterm")
     WebElement txtLoanTerm;
+
+    // ===== YEAR-WISE TABLE ROWS =====
 
     @FindBy(xpath = "//table//tr[contains(@class,'yearlypaymentdetails')]")
     List<WebElement> yearlyRows;
 
+    // ===== ACTIONS =====
 
-    public void setLoanAmount(String amount) {
+    // Navigate to Home Loan EMI Calculator from Menu
+    public void navigateToHomeLoanCalculator() {
+        Actions actions = new Actions(driver);
+
+        wait.until(ExpectedConditions.visibilityOf(loanCalculatorMenu));
+        actions.moveToElement(loanCalculatorMenu).perform();
+
+        wait.until(ExpectedConditions.elementToBeClickable(homeLoanCalculatorLink))
+                .click();
+    }
+
+    // Enter loan details
+    public void enterHomeLoanDetails(String amount, String interest, String tenure) {
         wait.until(ExpectedConditions.visibilityOf(txtLoanAmount));
+
         txtLoanAmount.clear();
         txtLoanAmount.sendKeys(amount);
-    }
 
-    public void setLoanInterest(String interest) {
         txtLoanInterest.clear();
         txtLoanInterest.sendKeys(interest);
-    }
 
-    public void setLoanTerm(String years) {
         txtLoanTerm.clear();
-        txtLoanTerm.sendKeys(years);
+        txtLoanTerm.sendKeys(tenure);
         txtLoanTerm.sendKeys(Keys.TAB); // triggers calculation
     }
 
-    public void fillHomeLoanDetails(String amount, String interest, String tenure) {
-        setLoanAmount(amount);
-        setLoanInterest(interest);
-        setLoanTerm(tenure);
-    }
-
-
-   public List<WebElement> getYearlyRows() {
-       scrollDown(); // important as table is below
+    // Get year-wise EMI table rows
+    public List<WebElement> getYearlyRows() {
+        wait.until(ExpectedConditions.visibilityOfAllElements(yearlyRows));
+        scrollDown();
         return yearlyRows;
     }
-
 }
