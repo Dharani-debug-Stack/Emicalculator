@@ -5,6 +5,7 @@
       <classes>
           <class name="testCases.CarLoanTest"/>
           <class name="testCases.EmiPageTest"/>
+          <class name="testCases.HomeLoanTest"/>
           <class name="testCases.LoanEMITest"/>
           <class name="testCases.TC_EMIPriceTest"/>
 

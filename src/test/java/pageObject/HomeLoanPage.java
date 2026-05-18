@@ -38,6 +38,11 @@ public class HomeLoanPage extends BasePage
         txtloanamount.click();
     }
 
+    public String getLoanAmountValue() {
+        return txtloanamount.getAttribute("value");
+    }
+
+
     public void setLoanInterest()
     {
         txtloaninterest.click();
@@ -69,6 +74,17 @@ public class HomeLoanPage extends BasePage
             cols = row.findElements(By.tagName("th")); // header
         }
         return cols;
+    }
+
+    public List<String[]> extractYearlyTable() {
+        List<String[]> data = new ArrayList<>();
+        scrollDown();
+        for(WebElement row : allRows) {
+            List<WebElement> cols = row.findElements(By.tagName("td"));
+            String[] rowData = cols.stream().map(WebElement::getText).toArray(String[]::new);
+            data.add(rowData);
+        }
+        return data;
     }
 
 }

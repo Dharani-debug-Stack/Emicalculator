@@ -56,6 +56,36 @@ public class HomeLoanTest extends BaseClass
                     + System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx");
 
             System.out.println("Table captured successfully!");
+
+
+
+            // Step 2: Extract yearly table
+            List<String[]> yearlyData = home.extractYearlyTable();
+
+            // Step 3: Parse and validate
+            double totalPrincipal = 0.0;
+            for(String[] row : yearlyData) {
+                String year = row[0];
+                String principal = row[1];
+                String interest = row[2];
+                String totalPayment = row[3];
+                String balance = row[4];
+                String loanPaid = row[5];
+
+                System.out.println(year + " | " + principal + " | " + interest + " | "
+                        + totalPayment + " | " + balance + " | " + loanPaid);
+
+                totalPrincipal += Double.parseDouble(principal.replace("₹","").replace(",","").trim());
+            }
+
+            // Step 4: Validate total principal equals loan amount
+            double expectedLoanAmount = Double.parseDouble(
+                    home.getLoanAmountValue().replace("₹","").replace(",","").trim()
+            );
+            Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0, "Principal mismatch!");
+
+
+
         }catch(Exception e)
         {
             e.printStackTrace();
