@@ -26,7 +26,7 @@ public class HomeLoanPage extends BasePage {
     WebElement txtLoanTerm;
 
     @FindBy(xpath = "//table//tr[contains(@class,'yearlypaymentdetails')]")
-    List<WebElement> yearlyRows;
+   public  List<WebElement> yearlyRows;
 
 
     public void setLoanAmount(String amount) {
