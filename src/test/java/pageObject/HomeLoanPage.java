@@ -1,4 +1,8 @@
 package pageObject;
+import java.util.ArrayList;
+
+
+import org.openqa.selenium.By;
 
 import java.util.List;
 
@@ -65,6 +69,10 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(txtHomeValue)).sendKeys("6500000");
     }
 
+    public String getHomeValue() {
+        return txtHomeValue.getAttribute("value");
+    }
+
     public void setDownPayment() {
         txtDownPayment.click();
         txtDownPayment.sendKeys(Keys.CONTROL + "a");
@@ -72,11 +80,23 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(txtDownPayment)).sendKeys("20");
     }
 
+    // Get Down Payment
+    public String getDownPayment() {
+        return txtDownPayment.getAttribute("value");
+    }
+
+
+
     public void setInsurance() {
         txtInsurance.click();
         txtInsurance.sendKeys(Keys.CONTROL + "a");
         txtInsurance.sendKeys(Keys.DELETE);
         wait.until(ExpectedConditions.visibilityOf(txtInsurance)).sendKeys("170000");
+    }
+
+    // Get Insurance
+    public String getInsurance() {
+        return txtInsurance.getAttribute("value");
     }
 
     public void setInterest() {
@@ -107,4 +127,31 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOfAllElements(yearlyRows));
         return yearlyRows.size() > 0;
     }
+//Extract yearly from table
+
+
+    public List<String[]> extractYearlyTable() {
+        scrollDown(); // scroll before reading
+        List<String[]> data = new ArrayList<>();
+        for (WebElement row : yearlyRows) {
+            List<WebElement> cols = row.findElements(By.tagName("td"));
+            String[] rowData = cols.stream().map(WebElement::getText).toArray(String[]::new);
+            data.add(rowData);
+        }
+        return data;
+    }
+
+    public List<WebElement> getAllRows() {
+        return yearlyRows;
+    }
+
+    public List<WebElement> getColumns(WebElement row) {
+        List<WebElement> cols = row.findElements(By.tagName("td"));
+
+        if (cols.size() == 0) {
+            cols = row.findElements(By.tagName("th")); // header
+        }
+        return cols;
+    }
+
 }

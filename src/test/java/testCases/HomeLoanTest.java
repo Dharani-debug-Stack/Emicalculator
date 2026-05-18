@@ -1,10 +1,14 @@
 package testCases;
 
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import pageObject.HomeLoanPage;
 import testBase.BaseClass;
+import utilities.ExcelUtils;
+
+import java.util.List;
 
 public class HomeLoanTest extends BaseClass {
 
@@ -33,9 +37,87 @@ public class HomeLoanTest extends BaseClass {
 
             System.out.println(" Home Loan EMI table generated successfully");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail("Test failed");
+
+            // Step 2: Extract yearly table
+            List<String[]> yearlyData = home.extractYearlyTable();
+
+            // Step 3: Parse and validate
+            double totalPrincipal = 0.0;
+            for(String[] row : yearlyData) {
+                String year = row[0];
+                String principal = row[1];
+                String interest = row[2];
+                String totalPayment = row[3];
+                String balance = row[4];
+                String loanPaid = row[5];
+
+                System.out.println(year + " | " + principal + " | " + interest + " | "
+                        + totalPayment + " | " + balance + " | " + loanPaid);
+
+                totalPrincipal += Double.parseDouble(principal.replace("₹","").replace(",","").trim());
+            }
+
+            double homeValue = Double.parseDouble(
+                    home.getHomeValue().replace("₹","").replace(",","").trim()
+            );
+
+            double downPaymentPercent = Double.parseDouble(
+                    home.getDownPayment().trim()
+            );
+
+            double insurance = Double.parseDouble(
+                    home.getInsurance().replace("₹","").replace(",","").trim()
+            );
+
+// Calculate down payment in rupees
+            double downPayment = homeValue * (downPaymentPercent / 100.0);
+
+// Expected loan amount
+            double expectedLoanAmount = homeValue + insurance - downPayment;
+
+// Validate
+            Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0, "Principal mismatch!");
+
+
+            System.out.println("✅ EMI table validation completed successfully. Principal matches expected loan amount!");
+
+
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            Assert.fail("Test failed");
+//        }
+
+        //ReadTable
+        ExcelUtils excel= new ExcelUtils("EMI Table");
+        List<WebElement> rows = home.getAllRows();
+        int rowNum = 0;  //Excel row index
+
+        for (WebElement row : rows) {
+
+            List<WebElement> cols = home.getColumns(row);
+
+            int colNum = 0;  //excel column index
+
+            for (WebElement col : cols) {
+                String data = col.getText().trim();
+                excel.write(rowNum, colNum++, data);
+            }
+            rowNum++;
         }
+        // Step 3:  Save Excel
+        excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
+
+        Runtime.getRuntime().exec(
+                "cmd /c start excel \"" +
+                        System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
+        );
+        System.out.println("Table captured successfully!");
     }
+        catch(Exception e)
+    {
+        e.printStackTrace();
+        Assert.fail();
+    }
+    }
+
 }
