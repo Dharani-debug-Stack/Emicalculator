@@ -16,13 +16,13 @@ public class HomeLoanPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(id = "loanamount")
+    @FindBy(xpath="//input[@id='loanamount']")
     WebElement txtLoanAmount;
 
-    @FindBy(id = "loaninterest")
+    @FindBy(xpath="//input[@id='loaninterest']")
     WebElement txtLoanInterest;
 
-    @FindBy(id = "loanterm")
+    @FindBy(xpath="//input[@id='loanterm']")
     WebElement txtLoanTerm;
 
     @FindBy(xpath = "//table//tr[contains(@class,'yearlypaymentdetails')]")
@@ -53,12 +53,9 @@ public class HomeLoanPage extends BasePage {
     }
 
 
-//    public List<WebElement> getYearlyRows() {
-//        scrollDown(); // important as table is below
-//        return yearlyRows;
-//    }
-
-    public List<WebElement> getColumns(WebElement row) {
-        return row.findElements(By.tagName("td"));
+   public List<WebElement> getYearlyRows() {
+       scrollDown(); // important as table is below
+        return yearlyRows;
     }
+
 }
