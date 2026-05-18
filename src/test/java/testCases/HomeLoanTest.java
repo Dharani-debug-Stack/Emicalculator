@@ -1,10 +1,12 @@
 package testCases;
 
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import pageObject.HomeLoanPage;
 import testBase.BaseClass;
+import utilities.ExcelUtils;
 
 import java.util.List;
 
@@ -79,9 +81,43 @@ public class HomeLoanTest extends BaseClass {
 
             System.out.println("✅ EMI table validation completed successfully. Principal matches expected loan amount!");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail("Test failed");
+
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            Assert.fail("Test failed");
+//        }
+
+        //ReadTable
+        ExcelUtils excel= new ExcelUtils("EMI Table");
+        List<WebElement> rows = home.getAllRows();
+        int rowNum = 0;  //Excel row index
+
+        for (WebElement row : rows) {
+
+            List<WebElement> cols = home.getColumns(row);
+
+            int colNum = 0;  //excel column index
+
+            for (WebElement col : cols) {
+                String data = col.getText().trim();
+                excel.write(rowNum, colNum++, data);
+            }
+            rowNum++;
         }
+        // Step 3:  Save Excel
+        excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
+
+        Runtime.getRuntime().exec(
+                "cmd /c start excel \"" +
+                        System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
+        );
+        System.out.println("Table captured successfully!");
     }
+        catch(Exception e)
+    {
+        e.printStackTrace();
+        Assert.fail();
+    }
+    }
+
 }

@@ -141,4 +141,17 @@ public class HomeLoanPage extends BasePage {
         return data;
     }
 
+    public List<WebElement> getAllRows() {
+        return yearlyRows;
+    }
+
+    public List<WebElement> getColumns(WebElement row) {
+        List<WebElement> cols = row.findElements(By.tagName("td"));
+
+        if (cols.size() == 0) {
+            cols = row.findElements(By.tagName("th")); // header
+        }
+        return cols;
+    }
+
 }
