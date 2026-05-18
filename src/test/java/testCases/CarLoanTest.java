@@ -24,6 +24,12 @@ public class CarLoanTest extends BaseClass
             car.setloanterm();
             car.getInterest();
             car.getTotal();
+
+            double emi = car.fetchEMI();
+            Assert.assertTrue(emi > 0);
+            boolean status = car.validateEMI();
+            Assert.assertTrue(status);
+
         }catch(Exception e)
         {
             Assert.fail();
