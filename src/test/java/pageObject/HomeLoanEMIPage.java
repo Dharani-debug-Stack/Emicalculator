@@ -8,14 +8,14 @@ import org.openqa.selenium.support.FindBy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeLoanEMIPage {
+public class HomeLoanEMIPage extends BasePage {
     WebDriver driver;
 
     @FindBy(xpath="//table//tr[contains(@class,'yearlypaymentdetails')]")
     List<WebElement> tableRows;
 
     public HomeLoanEMIPage(WebDriver driver) {
-        super();
+        super(driver);
     }
 
 
