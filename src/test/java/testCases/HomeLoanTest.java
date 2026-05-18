@@ -1,43 +1,65 @@
 package testCases;
 
+import java.util.List;
+
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pageObject.HomeLoanPage;
-import pageObject.HomeLoanEMIPage;
+import pageObject.HomePage;
 import testBase.BaseClass;
+import utilities.ExcelUtils;
 
-import java.util.List;
-
-public class HomeLoanTest extends BaseClass {
-
+public class HomeLoanTest extends BaseClass
+{
     @Test
-    public void validateYearlyEMIBreakup() {
-        HomeLoanPage homeLoanPage = new HomeLoanPage(driver);
-        HomeLoanEMIPage emiPage = new HomeLoanEMIPage(driver);
+    public void verifyHomeLoan()
+    {
+        try
+        {
+            HomePage hp= new HomePage(driver);
+            hp.clickhomeLoan();
 
-        // Step 1: Fill loan details
-        homeLoanPage.fillHomeLoanDetails("5000000", "8.5", "2");
+            HomeLoanPage home= new HomeLoanPage(driver);
+            home.setLoanAmount();
+            home.setLoanInterest();
+            home.setloanterm();
 
-        // Step 2: Extract yearly table
-        List<String[]> yearlyData = emiPage.extractYearlyTable();
+            //readtable
+            ExcelUtils excel= new ExcelUtils("EMI Table");
 
-        // Step 3: Parse and validate
-        double totalPrincipal = 0.0;
-        for(String[] row : yearlyData) {
-            String year = row[0];
-            String principal = row[1];
-            String interest = row[2];
-            String totalPayment = row[3];
-            String balance = row[4];
-            String loanPaid = row[5];
+            excel.write(0,0, "Year");
+            excel.write(0,1, "Principal");
+            excel.write(0,2, "Interest");
+            excel.write(0,3, "Total Payment");
+            excel.write(0,4, "Balance");
+            excel.write(0,5, "Loan Paid To Date");
 
-            System.out.println(year + " | " + principal + " | " + interest + " | "
-                    + totalPayment + " | " + balance + " | " + loanPaid);
+            List<WebElement> rows = home.getAllRows();
+            int rowNum = 1;  //Excel row index
 
-            totalPrincipal += Double.parseDouble(principal.replace("₹","").replace(",","").trim());
+            for (WebElement row : rows) {
+
+                List<WebElement> cols = home.getColumns(row);
+
+                int colNum = 0;  //excel column index
+
+                for (WebElement col : cols) {
+                    String data = col.getText().trim();
+                    excel.write(rowNum, colNum++, data);
+                }
+                rowNum++;
+            }
+            // Step 3:  Save Excel
+            excel.save(System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx");
+            Process exec = Runtime.getRuntime().exec("cmd /c start excel "
+                    + System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx");
+
+            System.out.println("Table captured successfully!");
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            Assert.fail();
         }
-
-        // Step 4: Validate total principal equals loan amount
-        Assert.assertEquals(totalPrincipal, 5000000.0, 1.0, "Principal mismatch!");
     }
 }
