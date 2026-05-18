@@ -1,5 +1,6 @@
 package pageObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -8,58 +9,66 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import pageObject.BasePage;
 
-public class HomeLoanPage extends BasePage {
-
-    public HomeLoanPage(WebDriver driver) {
+public class HomeLoanPage extends BasePage
+{
+    public HomeLoanPage(WebDriver driver)
+    {
         super(driver);
     }
 
     @FindBy(xpath="//input[@id='loanamount']")
-    WebElement txtLoanAmount;
+    WebElement txtloanamount;
 
     @FindBy(xpath="//input[@id='loaninterest']")
-    WebElement txtLoanInterest;
+    WebElement txtloaninterest;
 
     @FindBy(xpath="//input[@id='loanterm']")
-    WebElement txtLoanTerm;
+    WebElement txtloanterm;
 
-    @FindBy(xpath = "//table//tr[contains(@class,'yearlypaymentdetails')]")
-   public  List<WebElement> yearlyRows;
+    @FindBy(xpath="//table//tr[contains(@class,'yearlypaymentdetails')]")
+    List<WebElement> allRows;
 
-
-    public void setLoanAmount(String amount) {
-        wait.until(ExpectedConditions.visibilityOf(txtLoanAmount));
-        txtLoanAmount.clear();
-        txtLoanAmount.sendKeys(amount);
+    public void setLoanAmount()
+    {
+        txtloanamount.click();
+        txtloanamount.sendKeys(Keys.CONTROL+"a");
+        txtloanamount.sendKeys(Keys.DELETE);
+        wait.until(ExpectedConditions.visibilityOf(txtloanamount)).sendKeys("1500000");
+        txtloanamount.click();
     }
 
-    public void setLoanInterest(String interest) {
-        txtLoanInterest.clear();
-        txtLoanInterest.sendKeys(interest);
+    public void setLoanInterest()
+    {
+        txtloaninterest.click();
+        txtloaninterest.sendKeys(Keys.CONTROL+"a");
+        txtloaninterest.sendKeys(Keys.DELETE);
+        wait.until(ExpectedConditions.visibilityOf(txtloaninterest)).sendKeys("9.5");
+        txtloaninterest.click();
     }
 
-    public void setLoanTerm(String years) {
-        txtLoanTerm.clear();
-        txtLoanTerm.sendKeys(years);
-        txtLoanTerm.sendKeys(Keys.TAB); // triggers calculation
+    public void setloanterm()
+    {
+        txtloanterm.click();
+        txtloanterm.sendKeys(Keys.CONTROL+"a");
+        txtloanterm.sendKeys(Keys.DELETE);
+        wait.until(ExpectedConditions.visibilityOf(txtloanterm)).sendKeys("1");
+        txtloanterm.click();
+        txtloanterm.sendKeys(Keys.ENTER);
     }
 
-    public void fillHomeLoanDetails(String amount, String interest, String tenure) {
-        setLoanAmount(amount);
-        setLoanInterest(interest);
-        setLoanTerm(tenure);
-    }
-
-
-   public List<WebElement> getYearlyRows() {
-       scrollDown(); // important as table is below
-        return yearlyRows;
+    public List<WebElement> getAllRows() {
+        wait.until(ExpectedConditions.visibilityOfAllElements(allRows));
+        return allRows;
     }
 
     public List<WebElement> getColumns(WebElement row) {
+        List<WebElement> cols = row.findElements(By.tagName("td"));
 
-            return row.findElements(By.tagName("td"));
+        if (cols.size() == 0) {
+            cols = row.findElements(By.tagName("th")); // header
+        }
+        return cols;
     }
+
 }
