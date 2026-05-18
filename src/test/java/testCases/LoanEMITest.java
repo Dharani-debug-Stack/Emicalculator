@@ -9,17 +9,25 @@ import testBase.BaseClass;
 public class LoanEMITest extends BaseClass {
 
     @Test
-    public void validateLoanEMICalculatorInputFieldsFromMenu() {
+    public void validateLoanEMIInputFields() {
 
-        LoanEMIPage loanEMIPage = new LoanEMIPage(driver);
+        try {
 
-        // Navigate using Page Object
-        loanEMIPage.navigateToLoanEMICalculator();
+            LoanEMIPage emiPage = new LoanEMIPage(driver);
 
-        // Validate input fields
-        Assert.assertTrue(
-                loanEMIPage.areInputFieldsEnabled(),
-                "Loan EMI input fields are not enabled or not usable"
-        );
+            // Navigate (FIXED)
+            emiPage.navigateToLoanCalculator();
+
+            // Validate fields
+            boolean status = emiPage.validateAllFields();
+
+            Assert.assertTrue(status, "Fields are not visible!");
+
+            System.out.println("EMI input fields validated successfully");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("Test failed");
+        }
     }
 }

@@ -15,19 +15,19 @@ public class EmiPage extends BasePage
 
     //EMI
     @FindBy(xpath="//input[@id='loanamount']")
-    WebElement txtloanamount;
+    public WebElement txtloanamount;
 
     @FindBy(xpath="//input[@id='loaninterest']")
-    WebElement txtloaninterest;
+    public WebElement txtloaninterest;
 
     @FindBy(xpath="//input[@id='loanterm']")
-    WebElement txtloanterm;
+    public WebElement txtloanterm;
 
     @FindBy(xpath="//label[normalize-space()='Mo']")
     WebElement clickmonth;
 
     @FindBy(xpath="//input[@id='loanfees']")
-    WebElement txtloanfees;
+    public WebElement txtloanfees;
 
 //EMI
 // Loan Amount
@@ -214,6 +214,40 @@ public class EmiPage extends BasePage
         txtloanfees2.sendKeys(Keys.ENTER);
     }
 
+//UI Validations
 
+    public boolean validateTextFields() {
+        return txtloanamount.isDisplayed() && txtloanamount.isEnabled() &&
+                txtloaninterest.isDisplayed() && txtloaninterest.isEnabled() &&
+                txtloanterm.isDisplayed() && txtloanterm.isEnabled() &&
+                txtloanfees.isDisplayed() && txtloanfees.isEnabled();
+    }
+
+    public boolean validateInputBox(WebElement element, String value) {
+        element.click();
+        element.sendKeys(Keys.CONTROL + "a");
+        element.sendKeys(Keys.DELETE);
+        element.sendKeys(value);
+
+        String enteredValue = element.getAttribute("value");
+        return enteredValue.equals(value);
+    }
+
+    @FindBy(xpath = "//div[@id='loanamountslider']")
+    WebElement loanAmountSlider;
+
+    public boolean isSliderDisplayed(WebElement slider) {
+        return slider.isDisplayed();
+    }
+
+    public boolean validateSliderFunctionality() {
+        String before = txtloanamount.getAttribute("value");
+
+        setLoanAmount(); // change value
+
+        String after = txtloanamount.getAttribute("value");
+
+        return !before.equals(after);
+    }
 
 }

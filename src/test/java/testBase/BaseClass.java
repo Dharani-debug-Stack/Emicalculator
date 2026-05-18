@@ -8,6 +8,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
+
     public class BaseClass
     {
 
@@ -16,7 +17,8 @@ import org.testng.annotations.BeforeClass;
         @BeforeClass
         public void setup()
         {
-            driver=new ChromeDriver();
+            //driver=new ChromeDriver();
+            driver = new EdgeDriver();
             driver.manage().deleteAllCookies();
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
             driver.get("https://emicalculator.net/");

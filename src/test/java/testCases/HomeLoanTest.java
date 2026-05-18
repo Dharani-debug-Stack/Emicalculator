@@ -1,62 +1,41 @@
 package testCases;
 
-import java.util.List;
-
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import pageObject.HomeLoanPage;
-import pageObject.HomePage;
 import testBase.BaseClass;
 import utilities.ExcelUtils;
 
-public class HomeLoanTest extends BaseClass
-{
+import java.util.List;
+
+public class HomeLoanTest extends BaseClass {
+
     @Test
-    public void verifyHomeLoan()
-    {
-        try
-        {
-            HomePage hp= new HomePage(driver);
-            hp.clickhomeLoan();
+    public void verifyHomeLoanEMICalculator() {
 
-            HomeLoanPage home= new HomeLoanPage(driver);
-            home.setLoanAmount();
-            home.setLoanInterest();
-            home.setloanterm();
+        try {
 
-            //readtable
-            ExcelUtils excel= new ExcelUtils("EMI Table");
+            HomeLoanPage home = new HomeLoanPage(driver);
 
-            excel.write(0,0, "Year");
-            excel.write(0,1, "Principal");
-            excel.write(0,2, "Interest");
-            excel.write(0,3, "Total Payment");
-            excel.write(0,4, "Balance");
-            excel.write(0,5, "Loan Paid To Date");
+            // Step 1: Navigate
+            home.navigateToHomeLoanCalculator();
 
-            List<WebElement> rows = home.getAllRows();
-            int rowNum = 1;  //Excel row index
+            //  Step 2: Enter Loan Details
+            home.setHomeValue();
+            home.setDownPayment();
+            home.setInsurance();
+            home.setInterest();
+            home.setTenure();
+            home.setFees();
 
-            for (WebElement row : rows) {
+            //  Step 3: Validate Table Generated
+            boolean result = home.isTableGenerated();
 
-                List<WebElement> cols = home.getColumns(row);
+            Assert.assertTrue(result, " EMI table not generated");
 
-                int colNum = 0;  //excel column index
-
-                for (WebElement col : cols) {
-                    String data = col.getText().trim();
-                    excel.write(rowNum, colNum++, data);
-                }
-                rowNum++;
-            }
-            // Step 3:  Save Excel
-            excel.save(System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx");
-            Process exec = Runtime.getRuntime().exec("cmd /c start excel "
-                    + System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx");
-
-            System.out.println("Table captured successfully!");
-
+            System.out.println(" Home Loan EMI table generated successfully");
 
 
             // Step 2: Extract yearly table
@@ -78,18 +57,67 @@ public class HomeLoanTest extends BaseClass
                 totalPrincipal += Double.parseDouble(principal.replace("₹","").replace(",","").trim());
             }
 
-            // Step 4: Validate total principal equals loan amount
-            double expectedLoanAmount = Double.parseDouble(
-                    home.getLoanAmountValue().replace("₹","").replace(",","").trim()
+            double homeValue = Double.parseDouble(
+                    home.getHomeValue().replace("₹","").replace(",","").trim()
             );
+
+            double downPaymentPercent = Double.parseDouble(
+                    home.getDownPayment().trim()
+            );
+
+            double insurance = Double.parseDouble(
+                    home.getInsurance().replace("₹","").replace(",","").trim()
+            );
+
+// Calculate down payment in rupees
+            double downPayment = homeValue * (downPaymentPercent / 100.0);
+
+// Expected loan amount
+            double expectedLoanAmount = homeValue + insurance - downPayment;
+
+// Validate
             Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0, "Principal mismatch!");
 
 
+            System.out.println("✅ EMI table validation completed successfully. Principal matches expected loan amount!");
 
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-            Assert.fail();
+
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            Assert.fail("Test failed");
+//        }
+
+        //ReadTable
+        ExcelUtils excel= new ExcelUtils("EMI Table");
+        List<WebElement> rows = home.getAllRows();
+        int rowNum = 0;  //Excel row index
+
+        for (WebElement row : rows) {
+
+            List<WebElement> cols = home.getColumns(row);
+
+            int colNum = 0;  //excel column index
+
+            for (WebElement col : cols) {
+                String data = col.getText().trim();
+                excel.write(rowNum, colNum++, data);
+            }
+            rowNum++;
         }
+        // Step 3:  Save Excel
+        excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
+
+        Runtime.getRuntime().exec(
+                "cmd /c start excel \"" +
+                        System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
+        );
+        System.out.println("Table captured successfully!");
     }
+        catch(Exception e)
+    {
+        e.printStackTrace();
+        Assert.fail();
+    }
+    }
+
 }
