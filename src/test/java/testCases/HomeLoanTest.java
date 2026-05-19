@@ -87,16 +87,16 @@ public class HomeLoanTest extends BaseClass {
                 rowNum++;
             }
 
-            // ✅ FIX: Unique filename (avoids lock issue)
+            //  FIX: Unique filename (avoids lock issue)
             String filePath = System.getProperty("user.dir")
                     + "/src/test/resources/caldata_"
                     + System.currentTimeMillis() + ".xlsx";
 
             excel.save(filePath);
 
-            System.out.println("✅ Excel saved at: " + filePath);
+            System.out.println("Excel saved at: " + filePath);
 
-            // ✅ OPTIONAL: Open file safely
+            // OPTIONAL: Open file safely
             try {
                 if (java.awt.Desktop.isDesktopSupported()) {
                     java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
@@ -108,7 +108,7 @@ public class HomeLoanTest extends BaseClass {
         } catch (Exception e) {
 
             e.printStackTrace();
-            Assert.fail("❌ Test failed due to exception: " + e.getMessage());
+            Assert.fail("Test failed due to exception: " + e.getMessage());
         }
     }
 }
