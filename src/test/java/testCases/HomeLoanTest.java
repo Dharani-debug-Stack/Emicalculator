@@ -19,10 +19,10 @@ public class HomeLoanTest extends BaseClass {
 
             HomeLoanPage home = new HomeLoanPage(driver);
 
-            // ✅ Step 1: Navigate
+            //Navigate
             home.navigateToHomeLoanCalculator();
 
-            // ✅ Step 2: Enter Details
+            //Enter Details
             home.setHomeValue();
             home.setDownPayment();
             home.setInsurance();
@@ -30,13 +30,13 @@ public class HomeLoanTest extends BaseClass {
             home.setTenure();
             home.setFees();
 
-            // ✅ Step 3: Validate Table Generated
+            //Validate Table Generated
             boolean result = home.isTableGenerated();
-            Assert.assertTrue(result, "❌ EMI table not generated");
+            Assert.assertTrue(result, "EMI table not generated");
 
-            System.out.println("✅ Home Loan EMI table generated successfully");
+            System.out.println("Home Loan EMI table generated successfully");
 
-            // ✅ Step 4: Extract Table Data
+            //Extract Table Data
             List<String[]> yearlyData = home.extractYearlyTable();
 
             double totalPrincipal = 0.0;
@@ -50,7 +50,7 @@ public class HomeLoanTest extends BaseClass {
                 );
             }
 
-            // ✅ Step 5: Calculation
+            //Calculation
             double homeValue = Double.parseDouble(
                     home.getHomeValue().replace("₹", "").replace(",", "").trim()
             );
@@ -63,17 +63,26 @@ public class HomeLoanTest extends BaseClass {
             double downPayment = homeValue * (downPaymentPercent / 100.0);
             double expectedLoanAmount = homeValue + insurance - downPayment;
 
-            // ✅ Step 6: Validation
+            //Validation
             Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0,
-                    "❌ Principal mismatch");
+                    "Principal mismatch");
 
-            System.out.println("✅ EMI validation successful!");
+            System.out.println("EMI validation successful!");
 
-            // ✅ ✅ Step 7: Excel Write (FIXED)
+            //Excel Write (FIXED)
             ExcelUtils excel = new ExcelUtils("EMI Table");
 
+            excel.write(0,0,"Year");
+            excel.write(0,1,"Principal");
+            excel.write(0,2,"Interest");
+            excel.write(0,3,"Taxes, Home Insurance & Maintenance");
+            excel.write(0,4,"Total Payment");
+            excel.write(0,5,"Balance");
+            excel.write(0,6,"Loan Paid To Date");
+
+
             List<WebElement> rows = home.getAllRows();
-            int rowNum = 0;
+            int rowNum = 1;
 
             for (WebElement row : rows) {
 
@@ -87,28 +96,48 @@ public class HomeLoanTest extends BaseClass {
                 rowNum++;
             }
 
-            //  FIX: Unique filename (avoids lock issue)
-            String filePath = System.getProperty("user.dir")
-                    + "/src/test/resources/caldata_"
-                    + System.currentTimeMillis() + ".xlsx";
+            //Save Excel
+            excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
+            Runtime.getRuntime().exec(
+                    "cmd /c start excel \"" +
+                            System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
+            );
 
-            excel.save(filePath);
+            // Wait (user can see file)
+            Thread.sleep(5000);
 
-            System.out.println("Excel saved at: " + filePath);
+            // Close Excel
+            Runtime.getRuntime().exec("taskkill /f /im excel.exe");
 
-            // OPTIONAL: Open file safely
-            try {
-                if (java.awt.Desktop.isDesktopSupported()) {
-                    java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
-                }
-            } catch (Exception e) {
-                System.out.println("⚠ Unable to open Excel file automatically");
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            Assert.fail("Test failed due to exception: " + e.getMessage());
+                    System.out.println("Table captured successfully!");
+            System.out.println("Excel opened and closed successfully!");
+        }catch(Exception e)
+        {
+            Assert.fail();
         }
+
+//            //  FIX: Unique filename (avoids lock issue)
+//            String filePath = System.getProperty("user.dir")
+//                    + "/src/test/resources/caldata_"
+//                    + System.currentTimeMillis() + ".xlsx";
+//
+//            excel.save(filePath);
+//
+//            System.out.println("Excel saved at: " + filePath);
+//
+//            // OPTIONAL: Open file safely
+//            try {
+//                if (java.awt.Desktop.isDesktopSupported()) {
+//                    java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
+//                }
+//            } catch (Exception e) {
+//                System.out.println("⚠ Unable to open Excel file automatically");
+//            }
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//            Assert.fail("Test failed due to exception: " + e.getMessage());
+//        }
     }
 }
