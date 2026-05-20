@@ -17,8 +17,9 @@ public class ExtentListener implements ITestListener {
     }
 
     @Override
-    public void onTestSuccess(ITestResult result) {
-        test.get().pass("✅ Test Passed");
+    public void onTestSuccess(ITestResult result)
+    {
+        test.get().pass(" Test Passed");
     }
 
     @Override
@@ -41,12 +42,14 @@ public class ExtentListener implements ITestListener {
     }
 
     @Override
-    public void onTestSkipped(ITestResult result) {
-        test.get().skip("⚠ Test Skipped");
+    public void onTestSkipped(ITestResult result)
+    {
+        test.get().skip(" Test Skipped");
     }
 
     @Override
-    public void onFinish(ITestContext context) {
+    public void onFinish(ITestContext context)
+    {
         extent.flush();
     }
 }
