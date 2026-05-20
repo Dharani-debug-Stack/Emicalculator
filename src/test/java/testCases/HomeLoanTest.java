@@ -67,7 +67,7 @@ public class HomeLoanTest extends BaseClass {
             Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0,
                     "Principal mismatch");
 
-            System.out.println("EMI validation successful!");
+            System.out.println("HomeLoanEMI validation successful!");
 
             //Excel Write (FIXED)
             ExcelUtils excel = new ExcelUtils("EMI Table");

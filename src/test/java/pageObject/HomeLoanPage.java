@@ -69,9 +69,7 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(txtHomeValue)).sendKeys("6500000");
     }
 
-    public String getHomeValue() {
-        return txtHomeValue.getAttribute("value");
-    }
+
 
     public void setDownPayment() {
         txtDownPayment.click();
@@ -80,13 +78,6 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(txtDownPayment)).sendKeys("20");
     }
 
-    // Get Down Payment
-    public String getDownPayment() {
-        return txtDownPayment.getAttribute("value");
-    }
-
-
-
     public void setInsurance() {
         txtInsurance.click();
         txtInsurance.sendKeys(Keys.CONTROL + "a");
@@ -94,10 +85,6 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(txtInsurance)).sendKeys("170000");
     }
 
-    // Get Insurance
-    public String getInsurance() {
-        return txtInsurance.getAttribute("value");
-    }
 
     public void setInterest() {
         txtInterest.click();
@@ -127,8 +114,21 @@ public class HomeLoanPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOfAllElements(yearlyRows));
         return yearlyRows.size() > 0;
     }
-//Extract yearly from table
+    //Extract yearly from table
+    public String getHomeValue() {
+    return txtHomeValue.getAttribute("value");
+}
 
+    // Get Down Payment
+    public String getDownPayment() {
+        return txtDownPayment.getAttribute("value");
+    }
+
+
+    // Get Insurance
+    public String getInsurance() {
+        return txtInsurance.getAttribute("value");
+    }
 
     public List<String[]> extractYearlyTable() {
         scrollDown(); // scroll before reading
