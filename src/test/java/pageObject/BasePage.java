@@ -20,7 +20,7 @@ import java.time.Duration;
 
         public void scrollDown() {
             JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("window.scrollBy(0,600)");
+            js.executeScript("window.scrollBy(0,1500)");
         }
 
     }
