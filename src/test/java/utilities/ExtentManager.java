@@ -20,7 +20,7 @@ public class ExtentManager {
             extent = new ExtentReports();
             extent.attachReporter(spark);
 
-            extent.setSystemInfo("Tester", "Biswajit");
+
             extent.setSystemInfo("Tester", "Dharani");
             extent.setSystemInfo("Environment", "QA");
         }
