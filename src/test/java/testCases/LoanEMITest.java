@@ -8,15 +8,19 @@ import testBase.BaseClass;
 
 public class LoanEMITest extends BaseClass {
 
-    @Test
+    @Test(groups = {"Sanity","Master"})
     public void validateLoanEMIInputFields() {
+
+        capture.info("********** Loan EMI Input Field Test Started **********");
 
         try {
 
             LoanEMIPage emiPage = new LoanEMIPage(driver);
 
-            // Navigate (FIXED)
+            // Navigate
             emiPage.navigateToLoanCalculator();
+
+            capture.info("********** Navigated to Loan EMI Calculator **********");
 
             // Validate fields
             boolean status = emiPage.validateAllFields();
@@ -25,7 +29,12 @@ public class LoanEMITest extends BaseClass {
 
             System.out.println("EMI input fields validated successfully");
 
+            capture.info("********** EMI input fields validated successfully **********");
+
+            capture.info("********** Loan EMI Test Passed **********");
+
         } catch (Exception e) {
+            capture.error("********** Loan EMI Test Failed **********", e);
             e.printStackTrace();
             Assert.fail("Test failed");
         }

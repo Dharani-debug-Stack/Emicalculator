@@ -12,8 +12,10 @@ import java.util.List;
 
 public class HomeLoanTest extends BaseClass {
 
-    @Test
+    @Test(groups = {"Regression","Master","Sanity"})
     public void verifyHomeLoanEMICalculator() {
+
+        capture.info("********** Home Loan EMI Test Started **********");
 
         try {
 
@@ -30,27 +32,25 @@ public class HomeLoanTest extends BaseClass {
             home.setTenure();
             home.setFees();
 
+            capture.info("********** Input details entered successfully **********");
+
             //Validate Table Generated
             boolean result = home.isTableGenerated();
             Assert.assertTrue(result, "EMI table not generated");
 
-            System.out.println("Home Loan EMI table generated successfully");
+            capture.info("********** EMI table generated successfully **********");
 
             //Extract Table Data
             List<String[]> yearlyData = home.extractYearlyTable();
-
             double totalPrincipal = 0.0;
 
             for (String[] row : yearlyData) {
-
-                System.out.println(String.join(" | ", row));
-
                 totalPrincipal += Double.parseDouble(
                         row[1].replace("₹", "").replace(",", "").trim()
                 );
             }
 
-            //Calculation
+            //Calculation + Validation
             double homeValue = Double.parseDouble(
                     home.getHomeValue().replace("₹", "").replace(",", "").trim()
             );
@@ -63,13 +63,12 @@ public class HomeLoanTest extends BaseClass {
             double downPayment = homeValue * (downPaymentPercent / 100.0);
             double expectedLoanAmount = homeValue + insurance - downPayment;
 
-            //Validation
             Assert.assertEquals(totalPrincipal, expectedLoanAmount, 1.0,
                     "Principal mismatch");
 
-            System.out.println("HomeLoanEMI validation successful!");
+            capture.info("********** Loan calculation validated successfully **********");
 
-            //Excel Write (FIXED)
+            //Excel Write
             ExcelUtils excel = new ExcelUtils("EMI Table");
 
             excel.write(0,0,"Year");
@@ -80,41 +79,40 @@ public class HomeLoanTest extends BaseClass {
             excel.write(0,5,"Balance");
             excel.write(0,6,"Loan Paid To Date");
 
-
             List<WebElement> rows = home.getAllRows();
             int rowNum = 1;
 
             for (WebElement row : rows) {
-
                 List<WebElement> cols = home.getColumns(row);
                 int colNum = 0;
 
                 for (WebElement col : cols) {
                     excel.write(rowNum, colNum++, col.getText().trim());
                 }
-
                 rowNum++;
             }
 
-            //Save Excel
             excel.save(System.getProperty("user.dir")+"/src/test/resources/caldata.xlsx");
+
             Runtime.getRuntime().exec(
                     "cmd /c start excel \"" +
                             System.getProperty("user.dir") + "/src/test/resources/caldata.xlsx\""
             );
 
-            // Wait (user can see file)
             Thread.sleep(5000);
 
-            // Close Excel
             Runtime.getRuntime().exec("taskkill /f /im excel.exe");
 
-                    System.out.println("Table captured successfully!");
-            System.out.println("Excel opened and closed successfully!");
-        }catch(Exception e)
+            capture.info("********** Excel file generated and verified **********");
+            capture.info("********** Home Loan EMI Test Passed **********");
+
+        } catch(Exception e)
         {
+            capture.error("********** Home Loan Test Failed **********", e);
             Assert.fail();
         }
+    }
+}
 
 //            //  FIX: Unique filename (avoids lock issue)
 //            String filePath = System.getProperty("user.dir")
@@ -139,5 +137,5 @@ public class HomeLoanTest extends BaseClass {
 //            e.printStackTrace();
 //            Assert.fail("Test failed due to exception: " + e.getMessage());
 //        }
-    }
-}
+//    }
+//}

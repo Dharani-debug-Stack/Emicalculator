@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="Suite" >
+<suite name="MasterSuite" thread-count="5">
 
-    <!--  Enable TestNG HTML + Extent -->
+    <groups>
+        <run>
+            <include name="Master"/>
+            <include name="Sanity"/>
+            <exclude name="Regression"/>
+<!--            <include name="Regression"/>-->
+        </run>
+    </groups>
+
     <listeners>
-        <!-- Generates index.html -->
-        <listener class-name="org.testng.reporters.EmailableReporter2"/>
-
+<!--        <listener class-name="org.testng.reporters.EmailableReporter2"/>-->
         <!-- Extent Reports -->
         <listener class-name="utilities.ExtentListener"/>
     </listeners>
 
-    <test thread-count="5" name="EMI Test ">
+
+    <test name="EMI Test">
         <parameter name="os" value="Windows"/>
         <parameter name="browser" value="chrome"/>
         <classes>
@@ -21,8 +28,7 @@
             <class name="testCases.EmiPageTest"/>
             <class name="testCases.LoanEMITest"/>
             <class name="testCases.TC_EMIPriceTest"/>
+
         </classes>
-
     </test>
-
 </suite>
